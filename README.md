@@ -15,7 +15,7 @@ A RAG-based (Retrieval-Augmented Generation) chatbot system for KIIT University 
 - **Versioning**: Tracks changes to notices with full version history
 - **Docker-Ready**: Complete containerized deployment with docker-compose
 
-## 📋 Data Sources
+## 📋 Data Sources:
 
 The chatbot scrapes information from:
 
