@@ -18,7 +18,7 @@ _database: Optional[Database] = None
 
 
 def get_client() -> MongoClient:
-    """Get MongoDB client, creating if necessary"""
+    """Get MongoDB clients, creating if necessary"""
     global _client
     if _client is None:
         try:

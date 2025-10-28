@@ -14,7 +14,7 @@ from app.config import settings
 
 
 class JSONFormatter(logging.Formatter):
-    """Custom JSON formatter for structured logging"""
+    """Custom JSON formatter for a structured logging"""
 
     def format(self, record: logging.LogRecord) -> str:
         log_data: Dict[str, Any] = {

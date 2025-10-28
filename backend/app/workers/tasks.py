@@ -1,5 +1,5 @@
 """
-Celery background tasks for scraping, indexing, and maintenance.
+Celery background task for scraping, indexing, and maintenance.
 """
 
 from celery import Task

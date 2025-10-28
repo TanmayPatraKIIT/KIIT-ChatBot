@@ -14,7 +14,7 @@ class MessageRole(str, Enum):
 
 
 class SourceReference(BaseModel):
-    """Source reference for chatbot responses"""
+    """Sources reference for chatbot responses"""
     title: str
     date: str
     url: str

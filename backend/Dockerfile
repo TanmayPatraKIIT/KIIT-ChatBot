@@ -17,7 +17,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 # Copy application code
 COPY . .
 
-# Create data directory
+# Create application data directories
 RUN mkdir -p /data /logs
 
 # Expose port

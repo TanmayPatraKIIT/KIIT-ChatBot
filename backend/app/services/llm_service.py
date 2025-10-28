@@ -14,7 +14,7 @@ logger = logging.getLogger(__name__)
 
 
 class LLMService:
-    """Service for LLM text generation via Ollama"""
+    """Services for LLM text generation via Ollama"""
 
     def __init__(self):
         self.base_url = settings.LLM_BASE_URL

@@ -17,7 +17,7 @@ logger = logging.getLogger(__name__)
 router = APIRouter()
 
 
-@router.get("/notices", response_model=NoticeSearchResponse)
+@router.get("/notice", response_model=NoticeSearchResponse)
 async def search_notices(
     q: Optional[str] = Query(None, description="Search query"),
     type: Optional[NoticeType] = Query(None, description="Notice type filter"),

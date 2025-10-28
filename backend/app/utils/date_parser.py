@@ -23,7 +23,7 @@ DATE_PATTERNS = [
 
 def parse_date(date_string: str) -> Optional[datetime]:
     """
-    Parse date string to datetime object.
+    Parse the date string to datetime object.
     Handles multiple date formats.
 
     Args:

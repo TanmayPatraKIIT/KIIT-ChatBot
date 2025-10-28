@@ -25,7 +25,7 @@ def generate_content_hash(content: Union[str, bytes]) -> str:
 
 def generate_hash_from_dict(data: dict, exclude_keys: list = None) -> str:
     """
-    Generate hash from dictionary by converting to sorted string.
+    Generate hash from dictionary by converting to a sorted string.
 
     Args:
         data: Dictionary to hash

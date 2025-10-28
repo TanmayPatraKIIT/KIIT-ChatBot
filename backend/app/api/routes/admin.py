@@ -18,7 +18,7 @@ router = APIRouter()
 
 
 class ScrapeRequest(BaseModel):
-    """Request model for manual scrape trigger"""
+    """Request model for manual scrape triggers"""
     source: str  # "all", "general", "exam", "academic", "holiday"
 
 

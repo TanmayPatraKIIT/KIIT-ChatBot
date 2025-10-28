@@ -16,7 +16,7 @@ class UserRole(str, Enum):
 
 
 class User(BaseModel):
-    """User model for future authentication"""
+    """User models for future authentication"""
     id: Optional[str] = Field(None, alias="_id")
     email: EmailStr
     name: str

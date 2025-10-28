@@ -24,7 +24,7 @@ class NoticeMetadata(BaseModel):
 
 
 class Notice(BaseModel):
-    """Notice data model matching MongoDB schema"""
+    """Notice data model matching MongoDB schemas"""
 
     id: Optional[str] = Field(None, alias="_id")
     title: str

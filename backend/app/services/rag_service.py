@@ -19,7 +19,7 @@ logger = logging.getLogger(__name__)
 
 
 class RAGService:
-    """Service for retrieval-augmented generation"""
+    """Services for retrieval-augmented generation"""
 
     def __init__(self):
         self.llm_service = get_llm_service()

@@ -17,7 +17,7 @@ _celery_client: Optional[redis.Redis] = None
 
 
 def get_cache_client() -> redis.Redis:
-    """Get Redis client for caching"""
+    """Get Redis clients for caching"""
     global _cache_client
     if _cache_client is None:
         try:

@@ -1,5 +1,5 @@
 """
-Celery application configuration for background tasks.
+Celery application configuration for background task.
 """
 
 from celery import Celery

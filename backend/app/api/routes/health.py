@@ -25,7 +25,7 @@ class HealthResponse(BaseModel):
 async def health_check():
     """
     Health check endpoint.
-    Returns status of all services and basic statistics.
+    Returns status of all services and basic stats.
     """
     services_status = {}
     stats = {}

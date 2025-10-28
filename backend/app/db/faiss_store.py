@@ -20,7 +20,7 @@ _mapping: dict = {}  # Maps FAISS index position to MongoDB notice ID
 
 
 def init_index(dimension: int = 768) -> faiss.IndexFlatL2:
-    """Initialize FAISS index"""
+    """Initialize FAISS indices with given dimension"""
     global _index
     _index = faiss.IndexFlatL2(dimension)
     logger.info(f"Initialized FAISS IndexFlatL2 with dimension {dimension}")

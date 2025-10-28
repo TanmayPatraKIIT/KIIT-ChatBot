@@ -27,7 +27,7 @@ logger = logging.getLogger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
-    Lifespan context manager for startup and shutdown events.
+    Lifespan context manager for the startup and shutdown events.
     """
     # Startup
     logger.info("Starting KIIT ChatBot API...")

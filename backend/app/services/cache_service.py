@@ -22,7 +22,7 @@ logger = logging.getLogger(__name__)
 
 
 class CacheService:
-    """Service for managing cached responses and query tracking"""
+    """Services for managing cached responses and query tracking"""
 
     # Cache key prefixes
     RESPONSE_PREFIX = "chat:response:"

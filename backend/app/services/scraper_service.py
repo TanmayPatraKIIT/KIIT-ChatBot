@@ -26,7 +26,7 @@ logger = logging.getLogger(__name__)
 
 
 class ScraperService:
-    """Service for scraping KIIT data sources"""
+    """Service for scraping the KIIT data sources"""
 
     def __init__(self):
         self.timeout = settings.SCRAPE_TIMEOUT_SECONDS

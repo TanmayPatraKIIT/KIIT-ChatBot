@@ -8,7 +8,7 @@ from typing import List
 
 
 class Settings(BaseSettings):
-    """Application settings loaded from environment variables"""
+    """Application setting loaded from environment variables"""
 
     # MongoDB
     MONGODB_URL: str = "mongodb://localhost:27017"

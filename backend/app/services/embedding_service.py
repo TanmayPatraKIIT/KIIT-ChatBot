@@ -21,7 +21,7 @@ _model: Optional[SentenceTransformer] = None
 
 def get_model() -> SentenceTransformer:
     """
-    Get embedding model, loading if necessary.
+    Get the embedding model, loading if necessary.
     Uses singleton pattern to load model only once.
 
     Returns:

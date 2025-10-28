@@ -24,7 +24,7 @@ router = APIRouter()
 @router.post("", response_model=ChatResponse, status_code=status.HTTP_200_OK)
 async def chat(request: ChatRequest):
     """
-    Process chat query and return response.
+    Process chat query and return responses.
 
     Args:
         request: ChatRequest with query and optional session_id
