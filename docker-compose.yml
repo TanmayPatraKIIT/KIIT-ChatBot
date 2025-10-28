@@ -1,0 +1,171 @@
+version: '3.8'
+
+services:
+  # MongoDB database
+  mongodb:
+    image: mongo:7.0
+    container_name: kiit_mongodb
+    environment:
+      MONGO_INITDB_DATABASE: kiit_chatbot
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+    restart: unless-stopped
+    networks:
+      - kiit_network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/kiit_chatbot --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis cache and queue
+  redis:
+    image: redis:7-alpine
+    container_name: kiit_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    restart: unless-stopped
+    networks:
+      - kiit_network
+    command: redis-server --appendonly yes
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Ollama for LLM
+  ollama:
+    image: ollama/ollama:latest
+    container_name: kiit_ollama
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama_data:/root/.ollama
+    restart: unless-stopped
+    networks:
+      - kiit_network
+    # Uncomment for GPU support
+    # deploy:
+    #   resources:
+    #     reservations:
+    #       devices:
+    #         - driver: nvidia
+    #           count: 1
+    #           capabilities: [gpu]
+
+  # Backend API
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kiit_backend
+    ports:
+      - "8000:8000"
+    environment:
+      - MONGODB_URL=mongodb://mongodb:27017
+      - MONGODB_DB_NAME=kiit_chatbot
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - LLM_BASE_URL=http://ollama:11434
+      - LLM_MODEL=llama3:8b
+      - EMBEDDING_DEVICE=cpu
+      - API_HOST=0.0.0.0
+      - API_PORT=8000
+    volumes:
+      - ./backend:/app
+      - faiss_data:/data
+      - logs:/logs
+    depends_on:
+      mongodb:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+      ollama:
+        condition: service_started
+    restart: unless-stopped
+    networks:
+      - kiit_network
+    command: uvicorn app.main:app --host 0.0.0.0 --port 8000
+
+  # Celery worker for background tasks
+  celery_worker:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kiit_celery
+    environment:
+      - MONGODB_URL=mongodb://mongodb:27017
+      - MONGODB_DB_NAME=kiit_chatbot
+      - REDIS_URL=redis://redis:6379/0
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - LLM_BASE_URL=http://ollama:11434
+      - EMBEDDING_DEVICE=cpu
+    volumes:
+      - ./backend:/app
+      - faiss_data:/data
+      - logs:/logs
+    depends_on:
+      - mongodb
+      - redis
+      - backend
+    restart: unless-stopped
+    networks:
+      - kiit_network
+    command: celery -A app.workers.celery_app worker --loglevel=info
+
+  # Celery beat for scheduled tasks
+  celery_beat:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: kiit_celery_beat
+    environment:
+      - CELERY_BROKER_URL=redis://redis:6379/1
+      - MONGODB_URL=mongodb://mongodb:27017
+      - MONGODB_DB_NAME=kiit_chatbot
+    volumes:
+      - ./backend:/app
+    depends_on:
+      - redis
+      - celery_worker
+    restart: unless-stopped
+    networks:
+      - kiit_network
+    command: celery -A app.workers.celery_app beat --loglevel=info
+
+  # Frontend (Next.js) - Uncomment when frontend is ready
+  # frontend:
+  #   build:
+  #     context: ./frontend
+  #     dockerfile: Dockerfile
+  #   container_name: kiit_frontend
+  #   ports:
+  #     - "3000:3000"
+  #   environment:
+  #     - NEXT_PUBLIC_API_URL=http://localhost:8000
+  #     - NEXT_PUBLIC_WS_URL=ws://localhost:8000
+  #   volumes:
+  #     - ./frontend:/app
+  #     - /app/node_modules
+  #     - /app/.next
+  #   depends_on:
+  #     - backend
+  #   restart: unless-stopped
+  #   networks:
+  #     - kiit_network
+
+volumes:
+  mongodb_data:
+  redis_data:
+  ollama_data:
+  faiss_data:
+  logs:
+
+networks:
+  kiit_network:
+    driver: bridge
