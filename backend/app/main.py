@@ -142,7 +142,7 @@ async def chat(request: ChatRequest):
     """Chat endpoint with RAG"""
     try:
         # Search for relevant information
-        results = search_service.search_all(request.query, limit=3)
+        results = search_service.search_all(request.query, limit=10)
         
         # Build context from search results
         context_parts = []

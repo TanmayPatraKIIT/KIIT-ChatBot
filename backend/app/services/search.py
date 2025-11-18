@@ -13,13 +13,19 @@ class SearchService:
         """Search notices using keyword matching"""
         db = SessionLocal()
         try:
-            # Simple keyword search
-            results = db.query(Notice).filter(
-                or_(
-                    Notice.title.ilike(f"%{query}%"),
-                    Notice.content.ilike(f"%{query}%")
-                )
-            ).limit(limit).all()
+            # Split query into keywords for better matching
+            keywords = query.lower().split()
+            
+            # Build OR conditions for each keyword
+            conditions = []
+            for keyword in keywords:
+                conditions.extend([
+                    Notice.title.ilike(f"%{keyword}%"),
+                    Notice.content.ilike(f"%{keyword}%"),
+                    Notice.source_type.ilike(f"%{keyword}%")
+                ])
+            
+            results = db.query(Notice).filter(or_(*conditions)).limit(limit).all()
             
             return [{
                 "id": r.id,
@@ -36,13 +42,20 @@ class SearchService:
         """Search courses using keyword matching"""
         db = SessionLocal()
         try:
-            results = db.query(Course).filter(
-                or_(
-                    Course.name.ilike(f"%{query}%"),
-                    Course.code.ilike(f"%{query}%"),
-                    Course.description.ilike(f"%{query}%")
-                )
-            ).limit(limit).all()
+            # Split query into keywords for better matching
+            keywords = query.lower().split()
+            
+            # Build OR conditions for each keyword
+            conditions = []
+            for keyword in keywords:
+                conditions.extend([
+                    Course.name.ilike(f"%{keyword}%"),
+                    Course.code.ilike(f"%{keyword}%"),
+                    Course.description.ilike(f"%{keyword}%"),
+                    Course.department.ilike(f"%{keyword}%")
+                ])
+            
+            results = db.query(Course).filter(or_(*conditions)).limit(limit).all()
             
             return [{
                 "id": r.id,

@@ -153,10 +153,10 @@ export default function ChatPage() {
   }
 
   const suggestedQuestions = [
-    'When is the next exam?',
-    'Show me recent notices',
-    'What are the holidays this month?',
-    'Tell me about the academic calendar',
+    'What are the major national and international rankings achieved by KIIT University?',
+    'How many companies visited KIIT for placements in 2024, and what was the highest package offered?',
+    'What undergraduate, postgraduate, and doctoral courses does KIIT offer across its various schools?',
+    'Who is the founder of KIIT, and what are the university\'s vision and mission statements?',
   ]
 
   return (
