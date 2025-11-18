@@ -4,27 +4,51 @@
 RAG-based chatbot for KIIT University students providing AI-powered assistance with information about courses, notices, and university details. Successfully migrated from Vercel to Replit.
 
 ## Recent Changes (November 18, 2025)
+
+### Latest Updates
+- ✅ **Comprehensive KIIT Dataset Loaded**: 33 notices + 45 courses
+  - Placement statistics (2014-2024): 700+ companies, ₹53L highest package
+  - Rankings: THE, NIRF, QS, Times rankings
+  - Founder information: Prof. Achyuta Samanta profile
+  - Vision and mission statements
+  - Complete course catalog across all schools
+- ✅ **Clerk Authentication Integration** (Optional)
+  - Google OAuth sign-in support
+  - User profile management
+  - Sign-in/Sign-up pages
+  - Note: Currently optional due to Clerk domain configuration
+- ✅ **Enhanced Chat UI**
+  - 4 preset questions about rankings, placements, courses, and founder
+  - User-friendly interface with suggested queries
+- ✅ **Improved Search & RAG**
+  - Multi-keyword search (splits queries for better matching)
+  - Increased context limit from 3 to 10 results
+  - Better AI responses with comprehensive data
+
 ### Complete Migration to Replit Stack
 - **Database**: Migrated from MongoDB to PostgreSQL (Replit built-in)
 - **LLM**: Replaced Ollama (local) with OpenAI via Replit AI Integrations
 - **Cache**: Replaced Redis with in-memory caching (cachetools)
 - **Embeddings**: Simplified vector search using PostgreSQL storage
 - **Deployment**: Optimized for Replit environment
+- **Authentication**: Integrated Clerk for Google OAuth (optional)
 
 ### Key Features
-- ✅ PostgreSQL database with SQLAlchemy ORM
+- ✅ PostgreSQL database with 33 notices & 45 courses
 - ✅ OpenAI integration (no API key required - uses Replit credits)
 - ✅ In-memory caching for performance
 - ✅ Rate limiting middleware
-- ✅ RAG (Retrieval Augmented Generation) for accurate responses
+- ✅ RAG (Retrieval Augmented Generation) with real KIIT data
 - ✅ Next.js frontend with modern UI
 - ✅ FastAPI backend with async support
-- ✅ Auto-seeding with basic KIIT information
+- ✅ Clerk authentication (optional Google sign-in)
+- ✅ Comprehensive KIIT information (placements, rankings, courses, founder)
 
 ## Tech Stack
 
 ### Frontend
 - **Framework**: Next.js 14.0.3 with React 18.2.0
+- **Authentication**: Clerk (Google OAuth) - optional
 - **Styling**: Tailwind CSS with custom theme
 - **Animations**: Framer Motion, React Particles
 - **Forms**: React Hook Form with Zod validation
@@ -45,13 +69,14 @@ RAG-based chatbot for KIIT University students providing AI-powered assistance w
 ```
 ├── frontend/                 # Next.js frontend
 │   ├── app/                 # App router pages
-│   │   ├── chat/           # Chat interface
-│   │   ├── login/          # Login page
-│   │   ├── register/       # Registration page
-│   │   └── page.tsx        # Landing page
+│   │   ├── chat/           # Chat interface with preset questions
+│   │   ├── sign-in/        # Clerk sign-in page
+│   │   ├── sign-up/        # Clerk sign-up page
+│   │   └── page.tsx        # Landing page with Google auth
 │   ├── components/         # Reusable components
 │   ├── lib/                # API client and utilities
-│   └── .env.local          # Frontend environment variables
+│   ├── middleware.ts       # Clerk authentication middleware
+│   └── .env.local          # Frontend environment variables (includes Clerk keys)
 │
 ├── backend/                 # FastAPI backend
 │   ├── app/
@@ -104,6 +129,17 @@ All other configuration is in `backend/.env`:
 ### Frontend Configuration
 In `frontend/.env.local`:
 - `NEXT_PUBLIC_API_URL` - Backend API URL (auto-set to Replit domain)
+- `NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY` - Clerk public key (optional)
+- `CLERK_SECRET_KEY` - Clerk secret key (optional)
+
+### Authentication (Optional)
+Clerk authentication is configured but optional:
+- Users can use the chatbot without signing in
+- Google OAuth available via Clerk for personalized experience
+- To enable full authentication:
+  1. Configure Clerk domain in [Clerk Dashboard](https://dashboard.clerk.com/)
+  2. Add your Replit domain to allowed domains
+  3. Uncomment route protection in `frontend/middleware.ts`
 
 ## API Endpoints
 
@@ -165,10 +201,23 @@ curl http://localhost:8000/api/admin/stats
 
 ## Data Sources
 
-### Current Data (Basic Seed)
-The application is seeded with basic KIIT information:
-- 5 foundational notices (About KIIT, Location, Accreditation, Admissions, Facilities)
-- 8 academic programs (B.Tech, CSE, ECE, ME, MBA, BCA, M.Tech, B.Sc)
+### Current Data (Comprehensive Dataset)
+The application contains comprehensive KIIT information:
+- **33 Notices** including:
+  - Placement statistics (2014-2024): Year-wise data, trends
+  - 2024 highlights: 700+ companies, 5585+ offers, ₹53L highest package
+  - Rankings: THE World Rankings, NIRF, QS Rankings
+  - Founder: Prof. Achyuta Samanta profile and achievements
+  - Vision and mission statements
+  - About KIIT, location, accreditation, facilities
+- **45 Courses** across all schools:
+  - Engineering: B.Tech (CSE, ECE, ME, Civil, etc.), M.Tech, Ph.D.
+  - Management: BBA, MBA, Executive MBA
+  - Science: B.Sc, M.Sc programs
+  - Law: BBA-LLB, BA-LLB, LLM
+  - Medical: MBBS, B.Sc Nursing
+  - Film & Media: Bachelor/Master programs
+  - And many more specialized programs
 
 ### Future Data Sources
 Users can expand the dataset by:
@@ -189,7 +238,11 @@ Users can expand the dataset by:
 - ✅ Health monitoring
 
 ### Future Enhancements (To-Do)
-- [ ] User authentication system
+- [x] Clerk authentication with Google OAuth (implemented, optional)
+- [x] Comprehensive KIIT dataset (33 notices, 45 courses loaded)
+- [x] Improved search with multi-keyword matching
+- [x] Preset questions in chat UI
+- [ ] Complete Clerk domain configuration for production
 - [ ] Advanced vector similarity search with FAISS/pgvector
 - [ ] Streaming chat responses (SSE)
 - [ ] Automated content scraping from KIIT websites
@@ -197,6 +250,7 @@ Users can expand the dataset by:
 - [ ] User feedback and rating system
 - [ ] Export chat history
 - [ ] Multi-language support
+- [ ] Protected routes with Clerk middleware
 
 ## User Preferences
 - **Development Style**: Pragmatic and efficient - prioritize working solutions
@@ -235,14 +289,13 @@ Users can expand the dataset by:
 ## Known Issues & Limitations
 
 ### Current Limitations
-1. **Limited Dataset**: Only basic KIIT information (5 notices, 8 courses)
-   - Solution: User can add more data or implement scrapers
+1. **Clerk Authentication Optional**: Domain configuration needed for full protection
+   - Solution: Configure Clerk dashboard with Replit domain
+   - Workaround: App works perfectly without authentication
 
-2. **Simple Search**: Keyword-based, not semantic
-   - Solution: Can upgrade to vector similarity search later
-
-3. **No Authentication**: Auth endpoints exist but not implemented
-   - Solution: Implement JWT-based auth in future release
+2. **Simple Search**: Multi-keyword based, not fully semantic
+   - Solution: Can upgrade to vector similarity search with pgvector later
+   - Current: Works well with 10-result context limit
 
 4. **In-Memory Cache**: Lost on restart
    - Solution: Acceptable for now, can add Redis if needed
