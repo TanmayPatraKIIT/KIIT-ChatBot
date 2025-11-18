@@ -38,7 +38,9 @@ export default function RegisterPage() {
     handleSubmit,
     formState: { errors },
     watch,
-  } = useForm<RegisterFormData>()
+  } = useForm<RegisterFormData>({
+    mode: 'onChange',
+  })
 
   const password = watch('password')
 
@@ -144,7 +146,10 @@ export default function RegisterPage() {
                   <input
                     id="name"
                     type="text"
-                    {...register('name', { required: true })}
+                    {...register('name', { 
+                      required: 'Name is required',
+                      minLength: { value: 2, message: 'Name must be at least 2 characters' }
+                    })}
                     className="w-full pl-11 pr-4 py-3 bg-midnight/50 border border-electric-blue/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-electric-blue focus:ring-2 focus:ring-electric-blue/20 transition-all"
                     placeholder="Enter your full name"
                   />
@@ -164,7 +169,10 @@ export default function RegisterPage() {
                   <input
                     id="email"
                     type="email"
-                    {...register('email', { required: true })}
+                    {...register('email', { 
+                      required: 'Email is required',
+                      pattern: { value: /^[^\s@]+@[^\s@]+\.[^\s@]+$/, message: 'Invalid email address' }
+                    })}
                     className="w-full pl-11 pr-4 py-3 bg-midnight/50 border border-electric-blue/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-electric-blue focus:ring-2 focus:ring-electric-blue/20 transition-all"
                     placeholder="your.email@kiit.ac.in"
                   />
@@ -184,7 +192,10 @@ export default function RegisterPage() {
                   <input
                     id="password"
                     type="password"
-                    {...register('password', { required: true })}
+                    {...register('password', { 
+                      required: 'Password is required',
+                      minLength: { value: 8, message: 'Password must be at least 8 characters' }
+                    })}
                     className="w-full pl-11 pr-4 py-3 bg-midnight/50 border border-electric-blue/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-electric-blue focus:ring-2 focus:ring-electric-blue/20 transition-all"
                     placeholder="Create a strong password"
                   />
@@ -226,7 +237,10 @@ export default function RegisterPage() {
                   <input
                     id="confirmPassword"
                     type="password"
-                    {...register('confirmPassword', { required: true })}
+                    {...register('confirmPassword', { 
+                      required: 'Please confirm your password',
+                      validate: value => value === password || "Passwords don't match"
+                    })}
                     className="w-full pl-11 pr-4 py-3 bg-midnight/50 border border-electric-blue/30 rounded-xl text-white placeholder-slate-500 focus:outline-none focus:border-electric-blue focus:ring-2 focus:ring-electric-blue/20 transition-all"
                     placeholder="Re-enter your password"
                   />
