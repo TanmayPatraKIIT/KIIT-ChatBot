@@ -1,64 +1,50 @@
 """
 Configuration management using Pydantic settings.
-Loads configuration from environment variables and .env file.
+Configured for Replit environment with PostgreSQL and OpenAI.
 """
 
 from pydantic_settings import BaseSettings
 from typing import List
+import os
 
 
 class Settings(BaseSettings):
-    """Application setting loaded from environment variables"""
+    """Application settings for Replit environment"""
 
-    # MongoDB
-    MONGODB_URL: str = "mongodb://localhost:27017"
-    MONGODB_DB_NAME: str = "kiit_chatbot"
+    # Database - PostgreSQL (Replit built-in)
+    DATABASE_URL: str = os.environ.get("DATABASE_URL", "")
 
-    # Redis
-    REDIS_URL: str = "redis://localhost:6379/0"
-    REDIS_CACHE_DB: int = 0
-    REDIS_CELERY_DB: int = 1
-
-    # LLM Configuration
-    LLM_PROVIDER: str = "ollama"
-    LLM_MODEL: str = "llama3:8b"
-    LLM_BASE_URL: str = "http://localhost:11434"
+    # OpenAI - Using Replit AI Integrations
+    OPENAI_API_KEY: str = os.environ.get("AI_INTEGRATIONS_OPENAI_API_KEY", "")
+    OPENAI_BASE_URL: str = os.environ.get("AI_INTEGRATIONS_OPENAI_BASE_URL", "https://api.openai.com/v1")
+    OPENAI_MODEL: str = "gpt-4o-mini"
+    OPENAI_EMBEDDING_MODEL: str = "text-embedding-3-small"
     LLM_MAX_TOKENS: int = 512
     LLM_TEMPERATURE: float = 0.7
 
-    # Embedding Model
-    EMBEDDING_MODEL: str = "sentence-transformers/all-mpnet-base-v2"
-    EMBEDDING_DEVICE: str = "cpu"
+    # FAISS - Simplified in-memory with optional persistence
+    FAISS_INDEX_PATH: str = "/tmp/faiss_index.bin"
+    FAISS_MAPPING_PATH: str = "/tmp/faiss_mapping.json"
 
-    # FAISS
-    FAISS_INDEX_PATH: str = "/data/faiss_index.bin"
-    FAISS_MAPPING_PATH: str = "/data/faiss_to_mongo_mapping.json"
-
-    # Scraping
-    SCRAPE_INTERVAL_HOURS: int = 6
-    SCRAPE_TIMEOUT_SECONDS: int = 30
-    SCRAPE_MAX_RETRIES: int = 3
-
-    # API
+    # API Configuration
     API_HOST: str = "0.0.0.0"
     API_PORT: int = 8000
-    API_WORKERS: int = 4
+    API_WORKERS: int = 1
     API_RELOAD: bool = False
-
-    # Celery
-    CELERY_BROKER_URL: str = "redis://localhost:6379/1"
-    CELERY_RESULT_BACKEND: str = "redis://localhost:6379/1"
 
     # Logging
     LOG_LEVEL: str = "INFO"
-    LOG_FILE: str = "/logs/app.log"
+    LOG_FILE: str = "/tmp/app.log"
 
     # Security
-    API_KEY: str = "your_secret_api_key_for_admin_endpoints"
-    CORS_ORIGINS: str = "http://localhost:3000"
+    API_KEY: str = os.environ.get("API_KEY", "demo_api_key_change_in_production")
+    CORS_ORIGINS: str = os.environ.get("CORS_ORIGINS", "*")
 
-    # Rate Limiting
+    # Rate Limiting (in-memory)
     RATE_LIMIT_PER_MINUTE: int = 100
+
+    # Cache TTL (in seconds)
+    CACHE_TTL: int = 300
 
     class Config:
         env_file = ".env"
@@ -67,6 +53,8 @@ class Settings(BaseSettings):
     @property
     def cors_origins_list(self) -> List[str]:
         """Convert CORS_ORIGINS string to list"""
+        if self.CORS_ORIGINS == "*":
+            return ["*"]
         return [origin.strip() for origin in self.CORS_ORIGINS.split(",")]
 
 

@@ -11,21 +11,15 @@ echo ""
 # Check if backend dependencies are available
 BACKEND_READY=true
 
-# Check for MongoDB
-if [ -z "$MONGODB_URL" ]; then
-  echo "⚠️  MONGODB_URL not set - backend will not start"
+# Check for PostgreSQL (DATABASE_URL should be set by Replit)
+if [ -z "$DATABASE_URL" ]; then
+  echo "⚠️  DATABASE_URL not set - backend will not start"
   BACKEND_READY=false
 fi
 
-# Check for Redis  
-if [ -z "$REDIS_URL" ]; then
-  echo "⚠️  REDIS_URL not set - backend will not start"
-  BACKEND_READY=false
-fi
-
-# Check for LLM configuration
-if [ -z "$LLM_PROVIDER" ] || [ -z "$LLM_BASE_URL" ]; then
-  echo "⚠️  LLM configuration not set - backend will not start"
+# Check for OpenAI (via Replit AI Integrations)
+if [ -z "$AI_INTEGRATIONS_OPENAI_API_KEY" ]; then
+  echo "⚠️  OpenAI integration not configured - backend will not start"
   BACKEND_READY=false
 fi
 
@@ -37,7 +31,7 @@ if [ "$BACKEND_READY" = true ]; then
   
   # Start backend in background
   echo "Starting FastAPI backend on port 8000..."
-  cd backend && python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 &
+  cd "$ROOT_DIR/backend" && python -m uvicorn app.simple_main:app --host 0.0.0.0 --port 8000 &
   BACKEND_PID=$!
   
   # Wait for backend to initialize
@@ -53,12 +47,13 @@ if [ "$BACKEND_READY" = true ]; then
 else
   echo "⚠️  Backend prerequisites missing - starting frontend only"
   echo ""
-  echo "To start the backend, please configure:"
-  echo "  1. MONGODB_URL - MongoDB connection string"
-  echo "  2. REDIS_URL - Redis connection string"
-  echo "  3. LLM_PROVIDER and LLM_BASE_URL - LLM service configuration"
+  echo "Note: Backend is configured to use:"
+  echo "  ✅ PostgreSQL (Replit built-in database)"
+  echo "  ✅ OpenAI via Replit AI Integrations (no API key needed)"
+  echo "  ✅ In-memory caching (no Redis required)"
   echo ""
-  echo "Add these as Secrets in Replit, then restart the application."
+  echo "The OpenAI integration should be set up automatically."
+  echo "If you see this message, please restart the application."
   echo ""
   echo "Starting frontend on port 5000..."
   cd "$ROOT_DIR/frontend" && npm run dev
