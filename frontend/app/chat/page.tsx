@@ -2,9 +2,10 @@
 
 import { motion, AnimatePresence } from 'framer-motion'
 import Link from 'next/link'
-import { Bot, Send, Sparkles, User, ExternalLink, Calendar, FileText, Clock, Menu, X, LogOut } from 'lucide-react'
+import { Bot, Send, Sparkles, User, ExternalLink, Calendar, FileText, Clock, Menu, X } from 'lucide-react'
 import { useState, useEffect, useRef } from 'react'
-import { chatAPI, getCurrentUser, isAuthenticated, clearAuth } from '@/lib/api'
+import { useUser, UserButton } from '@clerk/nextjs'
+import { chatAPI } from '@/lib/api'
 import type { ChatMessage, Source } from '@/lib/api'
 
 const WS_URL = process.env.NEXT_PUBLIC_WS_URL || 'ws://localhost:8000'
@@ -22,8 +23,7 @@ export default function ChatPage() {
   const messagesEndRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
 
-  const user = getCurrentUser()
-  const authenticated = isAuthenticated()
+  const { user, isLoaded } = useUser()
 
   // Auto-scroll to bottom when new messages arrive
   const scrollToBottom = () => {
@@ -36,10 +36,10 @@ export default function ChatPage() {
 
   // Load chat history if authenticated
   useEffect(() => {
-    if (authenticated) {
+    if (user) {
       loadChatHistory()
     }
-  }, [authenticated])
+  }, [user])
 
   const loadChatHistory = async () => {
     try {
@@ -147,11 +147,6 @@ export default function ChatPage() {
     }
   }
 
-  const handleLogout = () => {
-    clearAuth()
-    window.location.href = '/login'
-  }
-
   const suggestedQuestions = [
     'What are the major national and international rankings achieved by KIIT University?',
     'How many companies visited KIIT for placements in 2024, and what was the highest package offered?',
@@ -177,34 +172,19 @@ export default function ChatPage() {
           </Link>
 
           <div className="flex items-center gap-4">
-            {authenticated && user ? (
+            {user && (
               <div className="hidden md:flex items-center gap-3">
                 <div className="flex items-center gap-2 px-3 py-2 glass rounded-lg border border-electric-blue/30">
                   <User className="w-4 h-4 text-electric-blue" />
-                  <span className="text-sm text-slate-300">{user.name}</span>
+                  <span className="text-sm text-slate-300">{user.firstName || user.emailAddresses[0]?.emailAddress}</span>
                 </div>
-                <button
-                  onClick={handleLogout}
-                  className="p-2 glass rounded-lg border border-electric-blue/30 hover:border-electric-blue text-slate-300 hover:text-white transition-all"
-                  title="Logout"
-                >
-                  <LogOut className="w-5 h-5" />
-                </button>
-              </div>
-            ) : (
-              <div className="hidden md:flex items-center gap-3">
-                <Link
-                  href="/login"
-                  className="px-4 py-2 glass rounded-lg border border-electric-blue/30 hover:border-electric-blue text-white transition-all"
-                >
-                  Sign In
-                </Link>
-                <Link
-                  href="/register"
-                  className="px-4 py-2 rounded-lg bg-gradient-to-r from-electric-blue to-neon-cyan text-white font-semibold hover:shadow-glow-blue transition-all"
-                >
-                  Sign Up
-                </Link>
+                <UserButton 
+                  appearance={{
+                    elements: {
+                      avatarBox: "w-10 h-10 border-2 border-electric-blue/50 hover:border-electric-blue transition-colors"
+                    }
+                  }}
+                />
               </div>
             )}
 
@@ -229,34 +209,19 @@ export default function ChatPage() {
             className="fixed top-20 right-0 bottom-0 w-64 glass border-l border-electric-blue/30 p-6 z-40 md:hidden"
           >
             <div className="flex flex-col gap-4">
-              {authenticated && user ? (
+              {user && (
                 <>
                   <div className="flex items-center gap-2 p-3 glass rounded-lg border border-electric-blue/30">
                     <User className="w-4 h-4 text-electric-blue" />
-                    <span className="text-sm text-slate-300">{user.name}</span>
+                    <span className="text-sm text-slate-300">{user.firstName || user.emailAddresses[0]?.emailAddress}</span>
                   </div>
-                  <button
-                    onClick={handleLogout}
-                    className="flex items-center gap-2 p-3 glass rounded-lg border border-electric-blue/30 hover:border-electric-blue text-slate-300 hover:text-white transition-all"
-                  >
-                    <LogOut className="w-5 h-5" />
-                    <span>Logout</span>
-                  </button>
-                </>
-              ) : (
-                <>
-                  <Link
-                    href="/login"
-                    className="px-4 py-2 glass rounded-lg border border-electric-blue/30 hover:border-electric-blue text-white text-center transition-all"
-                  >
-                    Sign In
-                  </Link>
-                  <Link
-                    href="/register"
-                    className="px-4 py-2 rounded-lg bg-gradient-to-r from-electric-blue to-neon-cyan text-white font-semibold hover:shadow-glow-blue text-center transition-all"
-                  >
-                    Sign Up
-                  </Link>
+                  <UserButton 
+                    appearance={{
+                      elements: {
+                        avatarBox: "w-10 h-10 border-2 border-electric-blue/50 hover:border-electric-blue transition-colors"
+                      }
+                    }}
+                  />
                 </>
               )}
             </div>

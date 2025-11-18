@@ -3,6 +3,7 @@
 import { motion } from 'framer-motion'
 import Link from 'next/link'
 import { Bot, Sparkles, Zap, Shield, MessageSquare, TrendingUp, ArrowRight, Github, Mail } from 'lucide-react'
+import { SignInButton, SignUpButton, SignedIn, SignedOut, UserButton } from '@clerk/nextjs'
 import { useEffect, useState } from 'react'
 
 export default function HomePage() {
@@ -38,9 +39,28 @@ export default function HomePage() {
             <Link href="#about" className="text-slate-300 hover:text-electric-blue transition-colors">
               About
             </Link>
-            <Link href="/chat" className="px-4 py-2 rounded-lg bg-gradient-to-r from-electric-blue to-neon-cyan text-white font-semibold hover:shadow-glow-blue transition-all btn-ripple">
-              Try Now
-            </Link>
+            <SignedOut>
+              <SignInButton mode="modal">
+                <button className="text-slate-300 hover:text-electric-blue transition-colors">
+                  Sign In
+                </button>
+              </SignInButton>
+              <Link href="/chat" className="px-4 py-2 rounded-lg bg-gradient-to-r from-electric-blue to-neon-cyan text-white font-semibold hover:shadow-glow-blue transition-all btn-ripple">
+                Try Now
+              </Link>
+            </SignedOut>
+            <SignedIn>
+              <Link href="/chat" className="px-4 py-2 rounded-lg bg-gradient-to-r from-electric-blue to-neon-cyan text-white font-semibold hover:shadow-glow-blue transition-all btn-ripple">
+                Go to Chat
+              </Link>
+              <UserButton 
+                appearance={{
+                  elements: {
+                    avatarBox: "w-10 h-10 border-2 border-electric-blue/50 hover:border-electric-blue transition-colors"
+                  }
+                }}
+              />
+            </SignedIn>
           </div>
 
           <button className="md:hidden">
@@ -110,27 +130,31 @@ export default function HomePage() {
               transition={{ delay: 0.7, duration: 0.8 }}
               className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16"
             >
-              <Link
-                href="/register"
-                className="group px-8 py-4 rounded-xl bg-gradient-to-r from-electric-blue via-mystic-purple to-neon-cyan text-white font-bold text-lg shadow-glow-blue hover:shadow-glow-purple transition-all btn-ripple flex items-center gap-2"
-              >
-                Get Started Free
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
-              </Link>
+              <SignedOut>
+                <SignUpButton mode="modal">
+                  <button className="group px-8 py-4 rounded-xl bg-gradient-to-r from-electric-blue via-mystic-purple to-neon-cyan text-white font-bold text-lg shadow-glow-blue hover:shadow-glow-purple transition-all btn-ripple flex items-center gap-2">
+                    Sign in with Google
+                    <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                  </button>
+                </SignUpButton>
 
-              <Link
-                href="/login"
-                className="px-8 py-4 rounded-xl glass border border-electric-blue/30 hover:border-electric-blue/60 text-white font-semibold text-lg transition-all card-hover"
-              >
-                Sign In
-              </Link>
+                <Link
+                  href="/chat"
+                  className="px-8 py-4 rounded-xl border-2 border-neon-cyan/50 hover:bg-neon-cyan/10 text-neon-cyan font-semibold text-lg transition-all"
+                >
+                  Try Without Login
+                </Link>
+              </SignedOut>
 
-              <Link
-                href="/chat"
-                className="px-8 py-4 rounded-xl border-2 border-neon-cyan/50 hover:bg-neon-cyan/10 text-neon-cyan font-semibold text-lg transition-all"
-              >
-                Try Without Login
-              </Link>
+              <SignedIn>
+                <Link
+                  href="/chat"
+                  className="group px-8 py-4 rounded-xl bg-gradient-to-r from-electric-blue via-mystic-purple to-neon-cyan text-white font-bold text-lg shadow-glow-blue hover:shadow-glow-purple transition-all btn-ripple flex items-center gap-2"
+                >
+                  Go to Chat
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </Link>
+              </SignedIn>
             </motion.div>
 
             {/* Stats */}
@@ -325,18 +349,27 @@ export default function HomePage() {
               Join thousands of KIIT students using AI to stay informed
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link
-                href="/register"
-                className="px-10 py-5 rounded-xl bg-gradient-to-r from-electric-blue to-neon-cyan text-white font-bold text-lg shadow-glow-blue hover:shadow-glow-purple transition-all btn-ripple"
-              >
-                Create Free Account
-              </Link>
-              <Link
-                href="/chat"
-                className="px-10 py-5 rounded-xl glass border border-neon-cyan/50 hover:border-neon-cyan text-white font-semibold text-lg transition-all"
-              >
-                Try Demo
-              </Link>
+              <SignedOut>
+                <SignUpButton mode="modal">
+                  <button className="px-10 py-5 rounded-xl bg-gradient-to-r from-electric-blue to-neon-cyan text-white font-bold text-lg shadow-glow-blue hover:shadow-glow-purple transition-all btn-ripple">
+                    Get Started Free
+                  </button>
+                </SignUpButton>
+                <Link
+                  href="/chat"
+                  className="px-10 py-5 rounded-xl glass border border-neon-cyan/50 hover:border-neon-cyan text-white font-semibold text-lg transition-all"
+                >
+                  Try Demo
+                </Link>
+              </SignedOut>
+              <SignedIn>
+                <Link
+                  href="/chat"
+                  className="px-10 py-5 rounded-xl bg-gradient-to-r from-electric-blue to-neon-cyan text-white font-bold text-lg shadow-glow-blue hover:shadow-glow-purple transition-all btn-ripple"
+                >
+                  Go to Chat
+                </Link>
+              </SignedIn>
             </div>
           </motion.div>
         </div>
