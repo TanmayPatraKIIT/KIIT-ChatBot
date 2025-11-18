@@ -1,7 +1,7 @@
 """
 Seed basic KIIT data
 """
-from database import SessionLocal, Notice, Course, init_db
+from app.database import SessionLocal, Notice, Course, init_db
 
 
 def seed_basic_data():

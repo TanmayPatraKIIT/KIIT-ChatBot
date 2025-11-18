@@ -1,28 +1,13 @@
 """
-Simplified search service using PostgreSQL and OpenAI embeddings
+Search service using PostgreSQL keyword matching
 """
 from app.database import SessionLocal, Notice, Course
-from app.services.simple_llm_service import llm_service
 from sqlalchemy import or_
-import numpy as np
-import json
-import os
 
 
 class SearchService:
     def __init__(self):
-        self.embeddings_cache = {}
-        self.load_embeddings()
-    
-    def load_embeddings(self):
-        """Load pre-computed embeddings if available"""
-        try:
-            from app.config import settings
-            if os.path.exists(settings.FAISS_MAPPING_PATH):
-                with open(settings.FAISS_MAPPING_PATH, 'r') as f:
-                    self.embeddings_cache = json.load(f)
-        except:
-            pass
+        pass
     
     def search_notices(self, query: str, limit: int = 5):
         """Search notices using keyword matching"""

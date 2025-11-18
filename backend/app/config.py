@@ -22,9 +22,6 @@ class Settings(BaseSettings):
     LLM_MAX_TOKENS: int = 512
     LLM_TEMPERATURE: float = 0.7
 
-    # FAISS - Simplified in-memory with optional persistence
-    FAISS_INDEX_PATH: str = "/tmp/faiss_index.bin"
-    FAISS_MAPPING_PATH: str = "/tmp/faiss_mapping.json"
 
     # API Configuration
     API_HOST: str = "0.0.0.0"

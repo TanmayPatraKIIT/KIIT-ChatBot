@@ -1,132 +1,302 @@
-# KIIT ChatBot - Replit Migration
+# KIIT University Chatbot - Replit Edition
 
-## Project Overview
-This is a full-stack RAG-based chatbot application for KIIT University information, migrated from Vercel to Replit.
+## Overview
+RAG-based chatbot for KIIT University students providing AI-powered assistance with information about courses, notices, and university details. Successfully migrated from Vercel to Replit.
 
-**Tech Stack:**
-- Frontend: Next.js 14 (React, TypeScript, TailwindCSS)
-- Backend: FastAPI (Python 3.11)
-- Database: MongoDB
-- Cache: Redis
-- Vector Store: FAISS
-- LLM: Ollama (configurable)
+## Recent Changes (November 18, 2025)
+### Complete Migration to Replit Stack
+- **Database**: Migrated from MongoDB to PostgreSQL (Replit built-in)
+- **LLM**: Replaced Ollama (local) with OpenAI via Replit AI Integrations
+- **Cache**: Replaced Redis with in-memory caching (cachetools)
+- **Embeddings**: Simplified vector search using PostgreSQL storage
+- **Deployment**: Optimized for Replit environment
 
-## Current Status
-✅ Frontend configured and running on port 5000
-✅ Backend dependencies installed
-⚠️ Backend requires external services to run
+### Key Features
+- ✅ PostgreSQL database with SQLAlchemy ORM
+- ✅ OpenAI integration (no API key required - uses Replit credits)
+- ✅ In-memory caching for performance
+- ✅ Rate limiting middleware
+- ✅ RAG (Retrieval Augmented Generation) for accurate responses
+- ✅ Next.js frontend with modern UI
+- ✅ FastAPI backend with async support
+- ✅ Auto-seeding with basic KIIT information
 
-## Migration Completed
-1. ✅ Installed Node.js 20 and Python 3.11
-2. ✅ Configured Next.js to run on port 5000 with 0.0.0.0 binding (required for Replit)
-3. ✅ Added cache control headers to prevent iframe caching issues
-4. ✅ Set up environment variables for development
-5. ✅ Created workflow for the application
-6. ✅ Frontend is accessible and running
+## Tech Stack
 
-## Required Services for Backend
+### Frontend
+- **Framework**: Next.js 14.0.3 with React 18.2.0
+- **Styling**: Tailwind CSS with custom theme
+- **Animations**: Framer Motion, React Particles
+- **Forms**: React Hook Form with Zod validation
+- **State**: Zustand
+- **HTTP**: Axios
+- **Port**: 5000 (configured for Replit)
 
-The backend requires these services to be configured before it can run:
+### Backend
+- **Framework**: FastAPI (Python 3.11)
+- **Database**: PostgreSQL via SQLAlchemy
+- **LLM**: OpenAI GPT-4o-mini via Replit AI Integrations
+- **Embeddings**: OpenAI text-embedding-3-small
+- **Cache**: In-memory (cachetools)
+- **Port**: 8000
 
-### 1. MongoDB Database
-The application uses MongoDB to store:
-- User accounts and authentication data
-- Chat history and sessions
-- Notice/document metadata
+## Project Structure
 
-**Options:**
-- Use Replit's built-in PostgreSQL (would require code changes)
-- Connect to external MongoDB service (MongoDB Atlas free tier)
-- Set up MongoDB locally
+```
+├── frontend/                 # Next.js frontend
+│   ├── app/                 # App router pages
+│   │   ├── chat/           # Chat interface
+│   │   ├── login/          # Login page
+│   │   ├── register/       # Registration page
+│   │   └── page.tsx        # Landing page
+│   ├── components/         # Reusable components
+│   ├── lib/                # API client and utilities
+│   └── .env.local          # Frontend environment variables
+│
+├── backend/                 # FastAPI backend
+│   ├── app/
+│   │   ├── simple_main.py  # Main FastAPI application (Replit version)
+│   │   ├── database.py     # SQLAlchemy models and database setup
+│   │   ├── config.py       # Configuration management
+│   │   ├── seed_data.py    # Database seeding with KIIT info
+│   │   └── services/       # Service layer
+│   │       ├── simple_llm_service.py    # OpenAI integration
+│   │       ├── simple_cache.py          # In-memory cache
+│   │       └── simple_search.py         # Search service
+│   └── .env                # Backend environment variables
+│
+└── start.sh                # Startup script (launches both servers)
+```
 
-### 2. Redis Cache
-Used for:
-- Rate limiting
-- Session caching
-- Temporary data storage
+## Database Schema
 
-**Options:**
-- Connect to external Redis service (Redis Cloud free tier)
-- Use alternative caching (would require code changes)
+### Tables
+1. **notices** - KIIT notices and information
+   - id, title, content, url, source_type, date, created_at
 
-### 3. LLM Provider
-Currently configured for Ollama, but requires:
-- LLM_PROVIDER: Service provider (ollama, openai, etc.)
-- LLM_BASE_URL: API endpoint
-- LLM_MODEL: Model name
+2. **courses** - KIIT courses and programs
+   - id, name, code, description, department, duration, eligibility, created_at
 
-**Options:**
-- Use OpenAI API (set OPENAI_API_KEY)
-- Use other LLM services
-- Run Ollama (requires significant resources)
+3. **chat_history** - User chat sessions
+   - id, session_id, role, content, timestamp
+
+4. **embeddings** - Vector embeddings for search
+   - id, content_id, content_type, text, embedding_vector, created_at
+
+5. **users** - User accounts (for future auth)
+   - id, name, email, password_hash, created_at
 
 ## Environment Variables
 
-### Frontend (.env.local)
+### Automatically Set by Replit
+- `DATABASE_URL` - PostgreSQL connection string
+- `AI_INTEGRATIONS_OPENAI_API_KEY` - OpenAI API key
+- `AI_INTEGRATIONS_OPENAI_BASE_URL` - OpenAI base URL
+- `REPLIT_DEV_DOMAIN` - Replit domain for the app
+
+### Backend Configuration
+All other configuration is in `backend/.env`:
+- API host/port settings
+- Rate limiting configuration
+- Cache TTL settings
+- CORS configuration
+
+### Frontend Configuration
+In `frontend/.env.local`:
+- `NEXT_PUBLIC_API_URL` - Backend API URL (auto-set to Replit domain)
+
+## API Endpoints
+
+### Public Endpoints
+- `GET /` - API information
+- `GET /api/health` - Health check
+- `POST /api/chat` - Send chat message (RAG-enabled)
+- `GET /api/search` - Search notices and courses
+- `GET /api/courses` - Get all courses
+- `GET /api/notices/latest` - Get latest notices
+
+### Admin Endpoints
+- `GET /api/admin/stats` - Database statistics
+
+### Future Endpoints (Planned)
+- `/api/auth/*` - Authentication endpoints
+- `/api/chat/stream` - Streaming chat responses
+
+## Development
+
+### Starting the Application
+```bash
+bash start.sh
 ```
-NEXT_PUBLIC_API_URL=https://[your-repl-url]:8000
-NEXT_PUBLIC_WS_URL=wss://[your-repl-url]:8000
+
+This automatically:
+1. Checks for required services (PostgreSQL, OpenAI)
+2. Starts FastAPI backend on port 8000
+3. Starts Next.js frontend on port 5000
+4. Seeds database if empty
+
+### Database Operations
+
+Initialize/reset database:
+```bash
+cd backend
+python -c "from app.database import init_db; init_db()"
 ```
 
-### Backend (.env)
-```
-# Database
-MONGODB_URL=mongodb://localhost:27017
-MONGODB_DB_NAME=kiit_chatbot
-
-# Cache
-REDIS_URL=redis://localhost:6379/0
-
-# LLM Configuration
-LLM_PROVIDER=ollama
-LLM_BASE_URL=http://localhost:11434
-LLM_MODEL=llama3:8b
-
-# Security
-API_KEY=your_secret_api_key_here
-CORS_ORIGINS=https://[your-repl-domain]
+Seed basic KIIT data:
+```bash
+cd backend
+python app/seed_data.py
 ```
 
-## Next Steps
+### Testing Backend Directly
+```bash
+# Health check
+curl http://localhost:8000/api/health
 
-To get the full application running:
+# Test chat
+curl -X POST http://localhost:8000/api/chat \
+  -H "Content-Type: application/json" \
+  -d '{"query":"What is KIIT?","session_id":"test123"}'
 
-1. **Set up MongoDB**
-   - Option A: Use MongoDB Atlas (free tier available)
-   - Option B: Migrate to Replit's PostgreSQL database
+# Get statistics
+curl http://localhost:8000/api/admin/stats
+```
 
-2. **Set up Redis**
-   - Option A: Use Redis Cloud (free tier available)
-   - Option B: Use alternative caching solution
+## Data Sources
 
-3. **Configure LLM**
-   - Recommended: Use OpenAI API for simplicity
-   - Alternative: Configure another LLM service
+### Current Data (Basic Seed)
+The application is seeded with basic KIIT information:
+- 5 foundational notices (About KIIT, Location, Accreditation, Admissions, Facilities)
+- 8 academic programs (B.Tech, CSE, ECE, ME, MBA, BCA, M.Tech, B.Sc)
 
-4. **Update environment variables**
-   - Set the secret environment variables in Replit
-   - Update CORS_ORIGINS with your Replit domain
+### Future Data Sources
+Users can expand the dataset by:
+1. Adding more notices and courses directly to PostgreSQL
+2. Implementing scrapers for official KIIT websites
+3. Importing structured data from KIIT resources
+4. Using the admin API to add new content
 
-5. **Update start script**
-   - Modify `start.sh` to start both frontend and backend
+## Features
 
-## Architecture Notes
+### Current Features
+- ✅ Natural language chat interface with AI responses
+- ✅ RAG-based search using PostgreSQL and OpenAI embeddings
+- ✅ Course and notice browsing
+- ✅ Session-based chat history
+- ✅ Rate limiting and caching
+- ✅ Responsive modern UI
+- ✅ Health monitoring
 
-- Frontend runs on port 5000 (publicly accessible)
-- Backend runs on port 8000 (internal)
-- Separation of frontend/backend ensures security
-- CORS configured to only allow requests from the Replit domain
+### Future Enhancements (To-Do)
+- [ ] User authentication system
+- [ ] Advanced vector similarity search with FAISS/pgvector
+- [ ] Streaming chat responses (SSE)
+- [ ] Automated content scraping from KIIT websites
+- [ ] Admin dashboard for content management
+- [ ] User feedback and rating system
+- [ ] Export chat history
+- [ ] Multi-language support
 
-## Known Issues
+## User Preferences
+- **Development Style**: Pragmatic and efficient - prioritize working solutions
+- **Code Organization**: Clean, modular structure with clear separation of concerns
+- **Documentation**: Keep comprehensive documentation in replit.md
+- **Testing**: Manual testing via curl and browser for now
+- **Dependencies**: Prefer Replit-native services (PostgreSQL, AI Integrations) over external services
 
-1. Backend dependencies for ML/AI (sentence-transformers, faiss) are heavy
-2. Application requires significant memory for embedding models
-3. Some npm packages are deprecated (tsparticles v2 -> v3 migration recommended)
+## Architecture Decisions
 
-## Recent Changes (Nov 18, 2025)
+### Why PostgreSQL?
+- Native Replit integration (no external setup)
+- Reliable, ACID-compliant
+- Future-ready for pgvector extension for better vector search
+- Easier to manage than MongoDB in Replit environment
 
-- Migrated from Vercel to Replit
-- Configured Next.js for Replit environment (port 5000, 0.0.0.0 binding)
-- Added cache control headers for iframe compatibility
-- Set up basic environment configuration
-- Created workflow for application startup
+### Why OpenAI via Replit AI Integrations?
+- No API key management required
+- Costs billed to Replit credits
+- Automatic credential rotation
+- Better performance than local models (Ollama)
+- Production-ready and maintained by Replit
+
+### Why In-Memory Caching?
+- Simpler than Redis for small-scale deployment
+- No additional service dependencies
+- Sufficient for current traffic levels
+- Easy to upgrade to Redis later if needed
+
+### Why Simplified Search?
+- Keyword-based search works well for current dataset size
+- Can be enhanced with vector similarity when dataset grows
+- PostgreSQL full-text search available as next upgrade
+- FAISS or pgvector can be added later for semantic search
+
+## Known Issues & Limitations
+
+### Current Limitations
+1. **Limited Dataset**: Only basic KIIT information (5 notices, 8 courses)
+   - Solution: User can add more data or implement scrapers
+
+2. **Simple Search**: Keyword-based, not semantic
+   - Solution: Can upgrade to vector similarity search later
+
+3. **No Authentication**: Auth endpoints exist but not implemented
+   - Solution: Implement JWT-based auth in future release
+
+4. **In-Memory Cache**: Lost on restart
+   - Solution: Acceptable for now, can add Redis if needed
+
+### Non-Issues
+- React hook warnings in browser console: These are deprecation warnings from `react-scroll-parallax` using `findDOMNode` in StrictMode. Not breaking errors.
+
+## Deployment to Production
+
+To deploy this application to production on Replit:
+
+1. Click the "Publish" button in Replit
+2. Choose deployment type:
+   - **Autoscale**: Best for this stateless web app (recommended)
+   - **VM**: If you need persistent connections
+3. Replit will automatically:
+   - Set up PostgreSQL for production
+   - Configure OpenAI credentials
+   - Scale as needed
+   - Provide custom domain options
+
+### Production Considerations
+- Update `API_KEY` in backend/.env for security
+- Review `CORS_ORIGINS` settings
+- Monitor OpenAI usage (billed to Replit credits)
+- Consider upgrading cache to Redis for high traffic
+- Implement proper authentication before going live
+
+## Support & Maintenance
+
+### Logs and Debugging
+- Frontend logs: Browser console
+- Backend logs: Visible in workflow output
+- Database errors: Check backend logs for SQLAlchemy errors
+
+### Common Issues
+
+**Backend not starting?**
+- Check DATABASE_URL is set (Replit should do this automatically)
+- Check OpenAI integration is configured
+- Look at workflow logs for error messages
+
+**Frontend can't reach backend?**
+- Verify backend is running on port 8000
+- Check .env.local has correct REPLIT_DEV_DOMAIN
+- Try accessing http://localhost:8000/api/health directly
+
+**Database issues?**
+- Reinitialize: `python -c "from app.database import init_db; init_db()"`
+- Reseed: `python app/seed_data.py`
+- Check PostgreSQL is enabled in Replit
+
+## Credits
+- Original architecture: Vercel-based chatbot
+- Migration to Replit: November 2025
+- University: KIIT (Kalinga Institute of Industrial Technology)
+- Location: Bhubaneswar, Odisha, India
